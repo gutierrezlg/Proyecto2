@@ -1,0 +1,507 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <iomanip>
+#include <conio.h>
+#include <stdlib.h>
+#include <string.h>
+
+using namespace std;
+
+void IngresoDeProductos();
+void AsociacionesDeProductos();
+void RegistrarReceta();
+void ReporteDeCatalogos();
+void ImpresionReceta();
+string ArchivoMedicamentos= "";
+string ArchivoClaves="";
+string codigo="";
+string nombre="";
+string cantidad="";
+int codigoNumeral=0;
+int verificacionCodigo1=0;
+int verificacionCodigo2=0;
+int cantidadNumero=0;
+int verificacionCantidad1=0;
+int verificacionCantidad2=0;
+string confirmaciOnopcion1="";
+string lecturaAsociacion="";
+string linea;
+int asociacionNumeral=0;
+int verificacionAsociacion1=0;
+int verificacionAsociacion2=0;
+string c= "";
+string n="";
+string cant="";
+string palabraAsociativa="";
+string respuestaAsociacion="";
+string numeroReceta="";
+int numeralReceta=0;
+int verificaionReceta1=0;
+int verificaionReceta2=0;
+string respuestaReceta="";
+string nRecetas="";
+string nombreCliente="";
+string cantidadRestada="";
+string ArchivoReceta="";
+string ArchivoTemporaneo="";
+string indicacion="";
+bool AsociacionCodigo=false;
+string verificacionAsociacioncompleta();
+bool buscarCodigo(string codigo);
+bool buscarAsociacion(string palabraAsociativa);
+bool buscarReceta(string numeralReceta);
+void CopiaReceta(ifstream &ArchivoReceta, string numeroReceta );
+bool preguntaReceta=false;
+bool falloReceta=false;
+
+int main()
+{
+    int opcion=0;
+
+    do
+    {
+        system("cls");
+        MENU:
+        system("color 0e");
+        cout<<"1. Ingresar productos"<<endl;
+        cout<<"2. Ingresar asociaciones con productos"<<endl;
+        cout<<"3. Registrar una receta"<<endl;
+        cout<<"4. Reporte de catalogo de productos"<<endl;
+        cout<<"5. Reporte de impresion de la receta"<<endl;
+        cout<<"6. Salir"<<endl;
+        cout<<"Ingrese la opcion deseada"<<endl;
+        cin >> opcion ;
+        system("cls");
+
+        if(cin.fail())
+        {
+            cin.clear();
+            cin.ignore();
+        }
+
+        switch(opcion)
+        {
+        case 1 :
+
+            IngresoDeProductos();
+            break;
+
+        case 2 :
+            AsociacionesDeProductos();
+            break;
+
+        case 3 :
+            RegistrarReceta();
+                break;
+
+        case 4 :
+            ReporteDeCatalogos;
+            break;
+
+        case 5 :
+            ImpresionReceta;
+            break;
+
+        case 6 :
+            cout<<"Usted esta saliendo del programa"<<endl;
+            break;
+
+        default:
+            cout<<"Ingrese una opcion valida"<<endl;
+            break;
+
+        }
+        system("pause");
+    }
+
+    while(opcion!=6);
+
+    return 0 ;
+}
+
+
+void IngresoDeProductos()
+{
+
+    ofstream ArchivoMedicamentos("MEDICAMENTOS.TXT",ios::app);
+
+    if(!ArchivoMedicamentos)
+    {
+        cout<<"No se pudo abrir el archivo"<<endl;
+        exit(EXIT_FAILURE);
+    }
+
+
+    do
+    {
+    do
+    {
+        do
+        {
+            cout<<"Ingrese el codigo del producto: "<<endl;
+            fflush(stdin);
+            getline(cin, codigo);
+        }
+        while(codigo.empty());
+        codigoNumeral=atoi(codigo.c_str());
+        verificacionCodigo1=codigo.length();
+        verificacionCodigo2=to_string(codigoNumeral).length();
+    }
+    while(verificacionCodigo1!=verificacionCodigo2||codigoNumeral<=0);
+    buscarCodigo(codigo);
+    }
+    while(buscarCodigo(codigo)==true);
+
+
+    do
+    {
+        cout<<"Ingrese el nombre del producto: "<<endl;
+        fflush(stdin);
+        getline(cin, nombre);
+    }
+    while(nombre.empty());
+
+    do
+    {
+        do
+        {
+            cout<<"Ingrese la cantidad de producto: "<<endl;
+            fflush(stdin);
+            getline(cin, cantidad);
+        }
+        while(cantidad.empty());
+        cantidadNumero=atoi(cantidad.c_str());
+        verificacionCantidad1=cantidad.length();
+        verificacionCantidad2=to_string(cantidadNumero).length();
+    }
+    while(verificacionCantidad1!=verificacionCantidad2||cantidadNumero>=0);
+
+
+    do
+    {
+        cout<<"INGRESAR EL MEDICAMENTO(S/N)"<<endl;
+        fflush(stdin);
+        getline(cin, confirmaciOnopcion1);
+
+        if(confirmaciOnopcion1=="s"||confirmaciOnopcion1== "S")
+        {
+            ArchivoMedicamentos<<left<<setw(7)<<codigo<<setw(14)<<nombre<<cantidad<<endl;
+            cout<<"El medicamento fue guardado en el documento MEDICAMENTOS"<<endl;
+            ArchivoMedicamentos.close();
+        }
+        else if(confirmaciOnopcion1=="n"|| confirmaciOnopcion1== "N")
+        {
+            cout<<"El medicamento fue descartado"<<endl;
+            ArchivoMedicamentos.close();
+        }
+    }
+    while(confirmaciOnopcion1!="s"&& confirmaciOnopcion1!="S"&& confirmaciOnopcion1!="n"&& confirmaciOnopcion1!="N");
+}
+
+void AsociacionesDeProductos()
+{
+
+    verificacionAsociacioncompleta();
+
+
+    ofstream ArchivoClaves("CLAVES.TXT",ios::app);
+
+    if(!ArchivoClaves)
+    {
+        cout<<"No se pudo abrir el archivo"<<endl;
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        do
+        {
+            cout<<"Ingrese la palabra asociativa unica"<<endl;
+            fflush(stdin);
+            getline(cin, palabraAsociativa);
+
+        }
+        while(palabraAsociativa.empty());
+        buscarAsociacion(palabraAsociativa);
+        }
+
+        do
+        {
+
+            cout<<"INGRESAR LA ASOCIACION (S/N)"<<endl;
+            fflush(stdin);
+            getline(cin, respuestaAsociacion);
+
+            if(respuestaAsociacion=="s"||respuestaAsociacion== "S")
+            {
+                ArchivoClaves<<left<<setw(7)<<lecturaAsociacion<<setw(14)<<palabraAsociativa<<endl;
+                cout<<"La asociacion se realizo de la siguiente manera: "<< lecturaAsociacion << " "<< palabraAsociativa<<endl;
+                ArchivoClaves.close();
+            }
+            else if(respuestaAsociacion=="n"||respuestaAsociacion== "N")
+            {
+                cout<<"No se realizo ninguna asociacion"<<endl;
+                ArchivoClaves.close();
+            }
+
+
+        }
+        while(respuestaAsociacion!="s"&& respuestaAsociacion!="S"&& respuestaAsociacion!="n"&& respuestaAsociacion!="N");
+    }
+
+
+
+
+void RegistrarReceta()
+{
+        char respuesta;
+         ofstream ArchivoReceta("RECETA.TXT",ios::app);
+
+        if(!ArchivoReceta){
+         exit(EXIT_FAILURE);
+        }
+    else{
+
+    do
+    {
+   do
+    {
+        do
+        {
+            cout<<"Ingrese el numero de la receta: "<<endl;
+            fflush(stdin);
+            getline(cin, numeroReceta);
+        }
+        while(numeroReceta.empty());
+        numeralReceta=atoi(numeroReceta.c_str());
+        verificaionReceta1=numeroReceta.length();
+        verificaionReceta2=to_string(numeralReceta).length();
+    }
+    while(verificaionReceta1!=verificaionReceta2||numeralReceta<1000);
+
+    buscarReceta(numeroReceta);
+    bool recetaEncontrada = buscarReceta(numeroReceta);
+
+    if(recetaEncontrada=true)
+    {
+        cout<<"RECETA YA EXISTE,SALIR DEL REGISTRO DE RECETA (S/N)."<<endl;
+        cin >>respuesta;
+    }
+        if(toupper(respuesta=='S'||'s'))
+        {
+            return;
+        } else if(toupper(respuesta=='N'||'n'))
+        {
+            CopiaReceta(ArchivoReceta,numeroReceta);
+            numeroReceta.clear();
+            continue;
+        }
+    }while((toupper(respuesta=='N'||'n'));
+
+
+
+    do
+        {
+            cout<<"Ingrese el nombre del cliente"<<endl;
+            fflush(stdin);
+            getline(cin, nombreCliente);
+
+        }
+        while(nombreCliente.empty());
+
+
+
+      verificacionAsociacioncompleta();
+
+      do
+      {
+          cout<<"Ingrese la indicacion"<<endl;
+          fflush(stdin);
+          getline(cin, indicacion);
+      }while(indicacion.empty());
+
+
+      do
+      {
+          cout<<"Ingrese la cantidad para la receta"<<endl;
+          fflush(stdin);
+          getline(cin,cantidadRestada);
+      }while(cantidadRestada.empty());
+
+
+      ArchivoReceta << numeroReceta << ";" << nombreCliente << ";" << indicacion << ";" << cantidadRestada << endl;
+      ArchivoReceta.close();
+}
+
+}
+
+
+
+string verificacionAsociacioncompleta ()
+{
+
+    do
+    {
+        do
+        {
+            cout<<"Ingrese el codigo del producto para crear la asociacion"<<endl;
+            fflush(stdin);
+            getline(cin, lecturaAsociacion);
+        }
+        while(lecturaAsociacion.empty());
+        asociacionNumeral=atoi(lecturaAsociacion.c_str());
+        verificacionAsociacion1=lecturaAsociacion.length();
+        verificacionAsociacion2=to_string(asociacionNumeral).length();
+    }
+    while (verificacionAsociacion1!=verificacionAsociacion2||asociacionNumeral<=0);
+
+    ifstream ArchivoMedicamentos("MEDICAMENTOS.TXT");
+    if(!ArchivoMedicamentos)
+    {
+        cout<<"No se pudo abrir el archivo"<<endl;
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        while(ArchivoMedicamentos>>c>>n>>cant)
+        {
+            if(c==lecturaAsociacion)
+            {
+                cout<<n<<endl;
+            }
+        }
+    }
+
+    return lecturaAsociacion;
+
+}
+
+
+bool buscarCodigo(string codigo)
+{
+
+    string codigoverificacion="";
+    string nom;
+    string cantc;
+    bool encontrado= false;
+    ifstream ArchivoMedicamentos("MEDICAMENTOS.TXT",ios::in);
+
+    if(!ArchivoMedicamentos)
+    {
+        cout<<"No existe registro, registre el codigo"<<endl;
+        return false;
+    }
+    else
+    {
+        while(ArchivoMedicamentos>>codigoverificacion>>nom>>cantc)
+        {
+            if(codigo==codigoverificacion)
+            {
+                encontrado= true;
+            }
+        }
+        ArchivoMedicamentos.close();
+        if(encontrado==true)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+}
+
+}
+
+bool buscarAsociacion(string palabraAsociativa)
+{
+    string asociacionVerificacion="";
+    string cod;
+    bool encontrado= false ;
+    ifstream ArchivoClaves("CLAVES.TXT",ios::in);
+
+    if(!ArchivoClaves)
+    {
+        cout<<"No existe la asociacion, registre la asociacion"<<endl;
+        return false;
+    }
+    else
+    {
+        while(ArchivoClaves>>cod>>asociacionVerificacion)
+        {
+            if(palabraAsociativa==asociacionVerificacion)
+            {
+                encontrado=true;
+            }
+    }
+    ArchivoClaves.close();
+    if(encontrado=true)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+}
+
+bool buscarReceta(string numeroReceta)
+{
+    string recetaVerificacion;
+    string nom, indi, rest;
+
+    ifstream ArchivoReceta("RECETA.TXT");
+
+    if (!ArchivoReceta) {
+        cout << "No se pudo abrir el archivo de Recetas" << endl;
+        return false;
+    }
+
+    while (ArchivoReceta >> recetaVerificacion >> nom >> indi >> rest) {
+        if (numeroReceta == recetaVerificacion) {
+            ArchivoReceta.close();
+            return true;
+        }
+    }
+
+    ArchivoReceta.close();
+    return false;
+}
+
+
+
+
+void CopiaReceta(ifstream &ArchivoReceta, string numeroReceta)
+{
+    cout<<numeroReceta<<endl;
+string numRec;
+string nom;
+string indi;
+string rest;
+ArchivoReceta.open("RECETA.TXT",ios::in);
+ofstream ArchivoAuxiliar("AUXILIAR.TXT",ios::out);
+if(ArchivoReceta.is_open()&&ArchivoAuxiliar.is_open())
+{
+    while(ArchivoReceta>>numRec>>nom>>indi>>rest)
+    {
+        if(numeroReceta!=numRec)
+        {
+            ArchivoAuxiliar<<left<<setw(7)<<numRec<<setw(7)<<nom<<setw(7)<<indi<<setw(7)<<rest<<endl;
+        }
+    }
+    ArchivoReceta.close();
+    ArchivoAuxiliar.close();
+    remove("RECETA.TXT");
+    rename("AUXILIAR.TXT","RECETA.TXT");
+}
+else
+{
+    cout<<"No se puedo abrir"<<endl;
+    return;
+}
+
+}
+
+
